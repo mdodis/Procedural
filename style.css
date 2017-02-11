@@ -1,0 +1,19 @@
+head{
+    background-color: rgb(44, 29, 138);
+}
+
+body{
+    background-color: rgb(107, 72, 72);
+}
+
+canvas{
+    margin: 0 auto;
+    vertical-align: middle;
+}
+
+h1{
+    color: rgb(204, 67, 71);
+    text-align: center;
+    font-family: cursive;
+    font-size: 60px;
+}
