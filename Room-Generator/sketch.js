@@ -44,7 +44,7 @@ function setup()
     {
         usables.splice(usables.indexOf(cols-1 + i*cols),1);
     }
-    for(var i = 0; i < cols; i++)
+    for(var i = 0; i < cols ; i++)
     {
         usables.splice(usables.indexOf(i  + (rows)* cols),1);
 
@@ -79,7 +79,6 @@ function CreateRoom(iteration)
     var pickedTile = tiles[tilepos];
 
     console.log(tilepos,pickedTile);
-    console.log("Hi, Guy!");
     pickedTile.used = true;
 
     // Calculate distance from bounds
@@ -110,18 +109,27 @@ function CreateRoom(iteration)
     }
 
     // After the creation of a new room we need to remove the unusable tiles around it
+    
     var delTile = tiles[pickedTile.x-1 + (pickedTile.y - 1) * cols];
+    
+    if(delTile != null){
+        for(var i = 0; i < rooms[iteration].roomWidth + 1; i++)
+        {
+            if(usables.indexOf(delTile.x + i + delTile.y * cols) != null){
+            usables.splice(usables.indexOf(delTile.x + i + delTile.y * cols),1);
+            }
+        }
 
-    for(var i = 0; i < rooms[iteration].roomWidth + 1; i++)
-    {
-        usables.splice(usables.indexOf(delTile.x + i + delTile.y * cols),1);
+        for(var i = 0; i < rooms[iteration].roomHeight + 1; i++)
+        {
+            if(usables.indexOf(delTile.x + (delTile.y + i) * cols) != null){
+            usables.splice(usables.indexOf(delTile.x + (delTile.y + i) * cols),1);
+            }
+        }
     }
 
-    for(var i = 0; i < rooms[iteration].roomHeight + 1; i++)
-    {
-        usables.splice(usables.indexOf(delTile.x + (delTile.y + i) * cols),1);
-    }
-
+    // TO-DO: Add room to room checking for overlap
+    
     rooms[iteration].init();
 }
 
@@ -176,4 +184,15 @@ function Room(tileList = [],roomWidth,roomHeight)
             tileList[i].used = true;
         }
     }
+}
+
+function containsObject(obj, list) {
+    var i;
+    for (i = 0; i < list.length; i++) {
+        if (list[i] === obj) {
+            return true;
+        }
+    }
+
+    return false;
 }
