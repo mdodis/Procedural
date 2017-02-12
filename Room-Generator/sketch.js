@@ -2,6 +2,7 @@ var rows, cols;
 const tileSize = 20;
 var MIN_ROOM_SIZE = 2;
 var MAX_ROOM_SIZE = 5;
+var MAX_ROOMS = 2;
 
 // Holds all drawn tiles in the area
 var tiles = [];
@@ -50,7 +51,9 @@ function setup()
     }
 
     // Create the first room
-    CreateRoom(0);
+    for(var i = 0; i < MAX_ROOMS; i++){
+        CreateRoom(i);
+    }
 
 
 }
@@ -71,58 +74,55 @@ function draw()
 
 function CreateRoom(iteration)
 {
-    if (iteration == 0)
+    // Pick a tile from the usables
+    var tilepos = usables[int(random(usables.length-1))];
+    var pickedTile = tiles[tilepos];
+
+    console.log(tilepos,pickedTile);
+    console.log("Hi, Guy!");
+    pickedTile.used = true;
+
+    // Calculate distance from bounds
+    var distance2r = cols - pickedTile.x;
+    var distance2d = rows - pickedTile.y;
+    console.log(distance2r,distance2d);
+
+    // Calculate Max room Width
+    var maxrs = CalculateRoomSize(distance2r);
+    var maxds = CalculateRoomSize(distance2d);
+    console.log(maxrs,maxds);
+
+    // Set the previously calculated dimensions
+    var roomWidth  = int(random(2,maxrs));
+    var roomHeight = int(random(2,maxds));
+
+    // troom = new Room([],roomWidth,roomHeight);
+
+    rooms.push(new Room([],roomWidth,roomHeight));
+    // Add rectangle denoted by roomWidth and roomHeight to room
+    for(var i = 0; i < roomWidth; i++)
     {
-        // Pick a tile from the usables
-        var tilepos = usables[int(random(usables.length-1))];
-        var pickedTile = tiles[tilepos];
-
-        console.log(tilepos,pickedTile);
-        console.log("Hi, Guy!");
-        pickedTile.used = true;
-
-        // Calculate distance from bounds
-        var distance2r = cols - pickedTile.x;
-        var distance2d = rows - pickedTile.y;
-        console.log(distance2r,distance2d);
-
-        // Calculate Max room Width
-        var maxrs = CalculateRoomSize(distance2r);
-        var maxds = CalculateRoomSize(distance2d);
-        console.log(maxrs,maxds);
-
-        // Set the previously calculated dimensions
-        var roomWidth  = int(random(2,maxrs));
-        var roomHeight = int(random(2,maxds));
-
-        // troom = new Room([],roomWidth,roomHeight);
-
-        rooms.push(new Room([],roomWidth,roomHeight));
-        // Add rectangle denoted by roomWidth and roomHeight to room
-        for(var i = 0; i < roomWidth; i++)
+        for(var j = 0; j < roomHeight; j++)
         {
-            for(var j = 0; j < roomHeight; j++)
-            {
 
-                rooms[0].tileList.push(tiles[(pickedTile.x + i) + (pickedTile.y + j)*cols]);
-            }
+            rooms[iteration].tileList.push(tiles[(pickedTile.x + i) + (pickedTile.y + j)*cols]);
         }
-
-        // After the creation of a new room we need to remove the unusable tiles around it
-        var delTile = tiles[pickedTile.x-1 + (pickedTile.y - 1) * cols];
-
-        for(var i = 0; i < rooms[0].roomWidth + 1; i++)
-        {
-            usables.splice(usables.indexOf(delTile.x + i + delTile.y * cols),1);
-        }
-
-        for(var i = 0; i < rooms[0].roomHeight + 1; i++)
-        {
-            usables.splice(usables.indexOf(delTile.x + (delTile.y + i) * cols),1);
-        }
-
-        rooms[0].init();
     }
+
+    // After the creation of a new room we need to remove the unusable tiles around it
+    var delTile = tiles[pickedTile.x-1 + (pickedTile.y - 1) * cols];
+
+    for(var i = 0; i < rooms[iteration].roomWidth + 1; i++)
+    {
+        usables.splice(usables.indexOf(delTile.x + i + delTile.y * cols),1);
+    }
+
+    for(var i = 0; i < rooms[iteration].roomHeight + 1; i++)
+    {
+        usables.splice(usables.indexOf(delTile.x + (delTile.y + i) * cols),1);
+    }
+
+    rooms[iteration].init();
 }
 
 // Calculates the maximum room dimension for a particular Tile coordinate
