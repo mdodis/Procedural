@@ -11,18 +11,19 @@ var troom;
 
 function setup()
 {
+
     createCanvas(640,480);
-    cols = width/tileSize;
-    rows = height/tileSize;
+    cols = floor(width/tileSize);
+    rows = floor(height/tileSize);
 
     //Pouplate the area with unused tiles
-    for (var i = 0; i < cols; i++)
+    for(var j = 0; j < rows; j++)
     {
-        for(var j = 0; j < cols; j++)
+        for (var i = 0; i < cols; i++)
         {
             tiles.push(new Tile(i,j));
 
-            usables.push( i * cols + j);
+            usables.push(i + j * (cols));
         }
     }
 
@@ -30,15 +31,14 @@ function setup()
     /* Remove the tiles which can't be used to make a room
     ** That means the bottom and left tile strips
     */
-    for(var i = 0; i < cols; i++)
+
+    for(var i = 0; i < rows-1; i++)
     {
-        usables.splice(usables.indexOf(cols * cols + i),1);
+        usables.splice(usables.indexOf(cols-1 + i*cols),1);
     }
-
-
     for(var i = 0; i < cols; i++)
     {
-        usables.splice(usables.indexOf(i * cols + rows-1),1);
+        usables.splice(usables.indexOf(i  + (rows)* cols),1);
     }
 
     CreateRoom(0);
@@ -50,7 +50,7 @@ function setup()
 function draw()
 {
     background(0);
-    for(var i = 0; i < tiles.length-1;i++)
+    for(var i = 0; i < tiles.length;i++)
     {
         tiles[i].draw();
     }
@@ -107,8 +107,8 @@ function CreateRoom(iteration)
         pickedTile.used = true;
 
         // Calculate distance from bounds
-        var distance2r = cols-1 - pickedTile.x;
-        var distance2d = rows-1 - pickedTile.y;
+        var distance2r = cols - pickedTile.x;
+        var distance2d = rows - pickedTile.y;
         console.log(distance2r,distance2d);
 
         // Calculate Max room Width
@@ -116,17 +116,17 @@ function CreateRoom(iteration)
         var maxds = CalculateRoomSize(distance2d);
         console.log(maxrs,maxds);
 
-        
+
         var roomWidth  = int(random(2,maxrs));
         var roomHeight = int(random(2,maxds));
         troom = new Room([],roomWidth,roomHeight);
 
-        for(var j = 0; j < roomHeight; j++)
+        for(var i = 0; i < roomWidth; i++)
         {
-            for(var i = 0; i < roomWidth; i++)
+            for(var j = 0; j < roomHeight; j++)
             {
                 //tiles[(picked.x + i) * cols + (picked.y + j)].used = true;
-                troom.tileList.push(tiles[(pickedTile.x + i) * cols + (pickedTile.y + j)]);
+                troom.tileList.push(tiles[(pickedTile.x + i) + (pickedTile.y + j)*cols]);
             }
         }
 
@@ -142,6 +142,6 @@ function CalculateRoomSize(distance)
     }
     else
     {
-        return MAX_ROOM_SIZE-distance;
+        return distance;
     }
 }
