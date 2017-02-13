@@ -2,7 +2,7 @@ var rows, cols;
 const tileSize = 20;
 var MIN_ROOM_SIZE = 2;
 var MAX_ROOM_SIZE = 5;
-var MAX_ROOMS = 2;
+var MAX_ROOMS = 3;
 
 // Holds all drawn tiles in the area
 var tiles = [];
@@ -33,6 +33,7 @@ function setup()
             tiles.push(new Tile(i,j));
 
             usables.push(i + j * (cols));
+
         }
     }
 
@@ -62,12 +63,15 @@ function setup()
 function draw()
 {
     background(0);
-    
+
     // Draw every tile
     for(var i = 0; i < tiles.length;i++)
     {
         tiles[i].draw();
     }
+
+    fill('#7a7a7a');
+    ellipse(mouseX,mouseY,10,10);
 }
 
 
@@ -109,27 +113,31 @@ function CreateRoom(iteration)
     }
 
     // After the creation of a new room we need to remove the unusable tiles around it
-    
+
     var delTile = tiles[pickedTile.x-1 + (pickedTile.y - 1) * cols];
-    
+
     if(delTile != null){
         for(var i = 0; i < rooms[iteration].roomWidth + 1; i++)
         {
             if(usables.indexOf(delTile.x + i + delTile.y * cols) != null){
+
             usables.splice(usables.indexOf(delTile.x + i + delTile.y * cols),1);
+
             }
         }
 
         for(var i = 0; i < rooms[iteration].roomHeight + 1; i++)
         {
             if(usables.indexOf(delTile.x + (delTile.y + i) * cols) != null){
+
             usables.splice(usables.indexOf(delTile.x + (delTile.y + i) * cols),1);
+
             }
         }
     }
 
     // TO-DO: Add room to room checking for overlap
-    
+
     rooms[iteration].init();
 }
 
@@ -182,17 +190,21 @@ function Room(tileList = [],roomWidth,roomHeight)
         for(var i = 0;i < tileList.length; i++)
         {
             tileList[i].used = true;
+            
         }
     }
 }
 
-function containsObject(obj, list) {
-    var i;
-    for (i = 0; i < list.length; i++) {
-        if (list[i] === obj) {
-            return true;
+// Inspection sub-system
+/*function CheckMouseCollision()
+{
+    for(let i = 0; i < rooms.length; i++)
+    {
+        for(let j = 0; j < rooms[i].tileList.length; j++)
+        {
+            let tile = rooms[i].tileList[j];
+
+
         }
     }
-
-    return false;
-}
+}*/
