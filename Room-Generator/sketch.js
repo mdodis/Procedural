@@ -61,7 +61,7 @@ function draw() {
         tiles[i].draw();
     }
 
-    /*fill('#7a7a7a');
+/*    fill('#7a7a7a');
     ellipse(mouseX,mouseY,10,10);*/
 }
 
@@ -95,6 +95,10 @@ function CreateRoom(iteration) {
     var allowHeight = maxds;
 
     // Calculates for overlapping rooms
+
+    /*
+    ** TO-DO: Document progress in book
+    */
     if (iteration > 0) {
         for (var i = 0; i < MAX_ROOM_SIZE; i++) {
             for (var j = 0; j < MAX_ROOM_SIZE; j++) {
@@ -153,14 +157,32 @@ function Tile(x, y) {
 
     this.draw = function() {
         strokeWeight(0.5);
+
         if (this.used == false) {
             fill(200, 69, 69);
+
+            // GUI
+            if(isMouseOver(this.x*tileSize,this.y*tileSize)){
+                fill(200, 141, 141);
+            }
         } else {
             fill(100, 255, 100);
+
+            // GUI
+            if(isMouseOver(this.x*tileSize,this.y*tileSize)){
+                fill(215, 255, 215);
+            }
+
         }
         rect(this.x * tileSize, this.y * tileSize, tileSize, tileSize);
     }
 
+}
+
+function isMouseOver(tx,ty){
+    if(mouseX >= tx && mouseX <= tx + tileSize && mouseY >= ty && mouseY <= ty + tileSize){
+        return true;
+    }
 }
 
 function Room(tileList = [], roomWidth, roomHeight) {
@@ -207,7 +229,7 @@ function PopRoomBorder(pickedTile, room) {
 
             delTile = tiles[delTile.x + (delTile.y + room.roomHeight + 1) * cols];
 
-            for (var i = 0; i < room.roomWidth + 1; i++) {
+            for (var i = 0; i < room.roomWidth; i++) {
 
                 if(usables.indexOf(delTile.x + i + delTile.y * cols) != null){
 
