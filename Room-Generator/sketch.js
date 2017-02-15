@@ -1,3 +1,10 @@
+/**Procedural Generation algorithm in P5.js
+ * Author: Michael Dodis
+ * License: MIT
+ * Documentation: Handwritten(probably in online docs by now)
+ */
+
+
 let rows, cols;
 const tileSize = 20;
 
