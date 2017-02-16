@@ -12,7 +12,7 @@ const tileSize = 20;
 var MIN_ROOM_SIZE = 2;
 var MAX_ROOM_SIZE = 5;
 // Max number of rooms
-var MAX_ROOMS = 3;
+var MAX_ROOMS = 4;
 
 // Holds all drawn tiles in the area
 let tiles = [];
@@ -21,7 +21,7 @@ let usables = [];
 // Contains all room objects created by the CreateRoom() function.
 let rooms = [];
 
-
+var testTile;
 
 
 function setup() {
@@ -57,6 +57,57 @@ function setup() {
     for (var i = 0; i < MAX_ROOMS; i++) {
         CreateRoom(i);
     }
+    
+    testTile = GetRndOuterTile(rooms[0]);
+    targetTile = GetRndOuterTile(rooms[1]);
+
+    var diff = Math.abs(testTile.y - targetTile.y);
+    var dir = -testTile.y + targetTile.y;
+    console.log("Y,Difference: ",diff, "Dir: ", dir);
+
+    // Allign on the y axis first
+    for(let i = 1; i < diff + 1 ; i++){
+
+        // testTile.y < targetTile.y
+        if(dir > 0){
+            if(tiles[testTile.x + (testTile.y + i)*cols] != null)
+            {
+                if(tiles[testTile.x + (testTile.y + i)*cols].used != true){
+                    tiles[testTile.x + (testTile.y + i)*cols].used = true;
+                }
+            }
+        }else if(dir < 0){
+            if(tiles[testTile.x + (testTile.y - i)*cols] != null)
+            {
+                if(tiles[testTile.x + (testTile.y - i)*cols].used != true){
+                    tiles[testTile.x + (testTile.y - i)*cols].used = true;
+                }
+            }
+        }
+    }
+    var lastDir = dir;
+    var lastDiff = diff;
+    // Complete on the X axis at last
+    var diff = Math.abs(testTile.x - targetTile.x);
+    var dir = -testTile.x + targetTile.x;
+    console.log("X,Difference: ",diff, "Dir: ", dir);
+
+    for(let i = 1; i < diff + 1; i++){
+        // to the right
+        if(dir > 0){
+            if(tiles[testTile.x + i + (testTile.y + lastDir)*cols] != null){
+                if(tiles[testTile.x + i + (testTile.y + lastDir)*cols].used != true){
+                    tiles[testTile.x + i + (testTile.y + lastDir)*cols].used = true;
+                }
+            }
+        }else if(dir < 0){
+            if(tiles[testTile.x - i + (testTile.y + lastDir)*cols] != null){
+                if(tiles[testTile.x - i + (testTile.y + lastDir)*cols].used != true){
+                    tiles[testTile.x - i + (testTile.y + lastDir)*cols].used = true;
+                }
+            }
+        }
+    }
 }
 
 
@@ -71,7 +122,6 @@ function draw() {
 /*    fill('#7a7a7a');
     ellipse(mouseX,mouseY,10,10);*/
 }
-
 
 
 function CreateRoom(iteration) {
@@ -161,6 +211,7 @@ function Tile(x, y) {
     this.x = x;
     this.y = y;
     this.used = false;
+    
 
     this.draw = function() {
         strokeWeight(0.5);
@@ -180,6 +231,13 @@ function Tile(x, y) {
                 fill(215, 255, 215);
             }
 
+        }
+
+        if(this == testTile){
+            fill(0,0,255);
+        }
+        if(this == targetTile){
+            fill(255,255,0);
         }
         rect(this.x * tileSize, this.y * tileSize, tileSize, tileSize);
     }
@@ -260,4 +318,9 @@ function PopRoomBorder(pickedTile, room) {
 
     }
 
+}
+
+function GetRndOuterTile(room){
+    // Get list of outer tiles
+    return room.tileList[int(random(0,room.tileList.length-1))];
 }
