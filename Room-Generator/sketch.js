@@ -22,7 +22,7 @@ let usables = [];
 let rooms = [];
 
 var testTile;
-
+let restartButton;
 
 function setup() {
 
@@ -31,83 +31,10 @@ function setup() {
     // Calculate Area tile-dimensions based on canvas dimensions
     cols = floor(width / tileSize);
     rows = floor(height / tileSize);
+    BuildArea();
 
-    //Pouplate the area with unused tiles
-    for (var j = 0; j < rows; j++) {
-        for (var i = 0; i < cols; i++) {
-            tiles.push(new Tile(i, j));
-            usables.push(i + j * (cols));
-        }
-    }
-
-
-    /*
-     ** Remove the tiles which can't be used to make a room
-     ** That means the bottom and left tile strips
-     */
-    for (var i = 0; i < rows - 1; i++) {
-        usables.splice(usables.indexOf(cols - 1 + i * cols), 1);
-    }
-    for (var i = 0; i < cols; i++) {
-        usables.splice(usables.indexOf(i + (rows) * cols), 1);
-
-    }
-
-    // Create all the rooms; also pass the iteration into the function
-    for (var i = 0; i < MAX_ROOMS; i++) {
-        CreateRoom(i);
-    }
-    
-    testTile = GetRndOuterTile(rooms[0]);
-    targetTile = GetRndOuterTile(rooms[1]);
-
-    var diff = Math.abs(testTile.y - targetTile.y);
-    var dir = -testTile.y + targetTile.y;
-    console.log("Y,Difference: ",diff, "Dir: ", dir);
-
-    // Allign on the y axis first
-    for(let i = 1; i < diff + 1 ; i++){
-
-        // testTile.y < targetTile.y
-        if(dir > 0){
-            if(tiles[testTile.x + (testTile.y + i)*cols] != null)
-            {
-                if(tiles[testTile.x + (testTile.y + i)*cols].used != true){
-                    tiles[testTile.x + (testTile.y + i)*cols].used = true;
-                }
-            }
-        }else if(dir < 0){
-            if(tiles[testTile.x + (testTile.y - i)*cols] != null)
-            {
-                if(tiles[testTile.x + (testTile.y - i)*cols].used != true){
-                    tiles[testTile.x + (testTile.y - i)*cols].used = true;
-                }
-            }
-        }
-    }
-    var lastDir = dir;
-    var lastDiff = diff;
-    // Complete on the X axis at last
-    var diff = Math.abs(testTile.x - targetTile.x);
-    var dir = -testTile.x + targetTile.x;
-    console.log("X,Difference: ",diff, "Dir: ", dir);
-
-    for(let i = 1; i < diff + 1; i++){
-        // to the right
-        if(dir > 0){
-            if(tiles[testTile.x + i + (testTile.y + lastDir)*cols] != null){
-                if(tiles[testTile.x + i + (testTile.y + lastDir)*cols].used != true){
-                    tiles[testTile.x + i + (testTile.y + lastDir)*cols].used = true;
-                }
-            }
-        }else if(dir < 0){
-            if(tiles[testTile.x - i + (testTile.y + lastDir)*cols] != null){
-                if(tiles[testTile.x - i + (testTile.y + lastDir)*cols].used != true){
-                    tiles[testTile.x - i + (testTile.y + lastDir)*cols].used = true;
-                }
-            }
-        }
-    }
+    restartButton = createButton('Rebuild');
+    restartButton.mousePressed(RebuildArea);
 }
 
 
@@ -119,8 +46,6 @@ function draw() {
         tiles[i].draw();
     }
 
-/*    fill('#7a7a7a');
-    ellipse(mouseX,mouseY,10,10);*/
 }
 
 
@@ -323,4 +248,97 @@ function PopRoomBorder(pickedTile, room) {
 function GetRndOuterTile(room){
     // Get list of outer tiles
     return room.tileList[int(random(0,room.tileList.length-1))];
+}
+
+function ClearEverything(){
+    tiles.splice(0,tiles.length);
+    usables.splice(0,usables.length);
+    rooms.splice(0,rooms.length);
+}
+function BuildArea(){
+//Pouplate the area with unused tiles
+    for (var j = 0; j < rows; j++) {
+        for (var i = 0; i < cols; i++) {
+            tiles.push(new Tile(i, j));
+            usables.push(i + j * (cols));
+        }
+    }
+
+
+    /*
+     ** Remove the tiles which can't be used to make a room
+     ** That means the bottom and left tile strips
+     */
+    for (var i = 0; i < rows - 1; i++) {
+        usables.splice(usables.indexOf(cols - 1 + i * cols), 1);
+    }
+    for (var i = 0; i < cols; i++) {
+        usables.splice(usables.indexOf(i + (rows) * cols), 1);
+
+    }
+
+    // Create all the rooms; also pass the iteration into the function
+    for (var i = 0; i < MAX_ROOMS; i++) {
+        CreateRoom(i);
+    }
+    
+    testTile = GetRndOuterTile(rooms[0]);
+    targetTile = GetRndOuterTile(rooms[1]);
+
+    var diff = Math.abs(testTile.y - targetTile.y);
+    var dir = -testTile.y + targetTile.y;
+    console.log("Y,Difference: ",diff, "Dir: ", dir);
+
+    // Allign on the y axis first
+    for(let i = 1; i < diff + 1 ; i++){
+
+        // testTile.y < targetTile.y
+        if(dir > 0){
+            if(tiles[testTile.x + (testTile.y + i)*cols] != null)
+            {
+                if(tiles[testTile.x + (testTile.y + i)*cols].used != true){
+                    tiles[testTile.x + (testTile.y + i)*cols].used = true;
+                }
+            }
+        }else if(dir < 0){
+            if(tiles[testTile.x + (testTile.y - i)*cols] != null)
+            {
+                if(tiles[testTile.x + (testTile.y - i)*cols].used != true){
+                    tiles[testTile.x + (testTile.y - i)*cols].used = true;
+                }
+            }
+        }
+    }
+    var lastDir = dir;
+    var lastDiff = diff;
+    // Complete on the X axis at last
+    var diff = Math.abs(testTile.x - targetTile.x);
+    var dir = -testTile.x + targetTile.x;
+    console.log("X,Difference: ",diff, "Dir: ", dir);
+
+    for(let i = 1; i < diff + 1; i++){
+        // to the right
+        if(dir > 0){
+            if(tiles[testTile.x + i + (testTile.y + lastDir)*cols] != null){
+                if(tiles[testTile.x + i + (testTile.y + lastDir)*cols].used != true){
+                    tiles[testTile.x + i + (testTile.y + lastDir)*cols].used = true;
+                }
+            }
+        }else if(dir < 0){
+            if(tiles[testTile.x - i + (testTile.y + lastDir)*cols] != null){
+                if(tiles[testTile.x - i + (testTile.y + lastDir)*cols].used != true){
+                    tiles[testTile.x - i + (testTile.y + lastDir)*cols].used = true;
+                }
+            }
+        }
+    }
+}
+
+function RebuildArea(){
+    ClearEverything();
+    BuildArea();
+}
+
+function HandleCrossingRoom(){
+    
 }
