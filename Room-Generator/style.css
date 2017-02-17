@@ -3,19 +3,30 @@ head{
 }
 
 body{
-    background-color: rgb(203, 157, 157);
+    background-color: rgba(84, 110, 122, 1);
 }
 
-canvas{
-    margin: 0 auto;
-    vertical-align: middle;
-}
+
 
 h1{
-    color: rgb(138, 92, 93);
-    text-align: center;
-    border-radius: 5px;
+    color: rgba(197, 225, 165, 1);
     
     font-family: monospace;
+    display: table;
     font-size: 60px;
+}
+
+button {
+    background-color: rgb(95, 177, 7); /* Green */
+    border: none;
+    color: white;
+    
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: block;
+    font-size: 16px;
+}
+button:hover{
+    background-color: rgba(158, 177, 137, 1); /* Green */
 }

@@ -5,14 +5,15 @@
  */
 
 
-let rows, cols;
+var rows;
+var cols;
 const tileSize = 20;
 
 // Max room dimensions
 var MIN_ROOM_SIZE = 2;
 var MAX_ROOM_SIZE = 5;
 // Max number of rooms
-var MAX_ROOMS = 4;
+var MAX_ROOMS = 3;
 
 // Holds all drawn tiles in the area
 let tiles = [];
@@ -21,7 +22,7 @@ let usables = [];
 // Contains all room objects created by the CreateRoom() function.
 let rooms = [];
 
-var testTile;
+
 let restartButton;
 
 function setup() {
@@ -158,12 +159,6 @@ function Tile(x, y) {
 
         }
 
-        if(this == testTile){
-            fill(0,0,255);
-        }
-        if(this == targetTile){
-            fill(255,255,0);
-        }
         rect(this.x * tileSize, this.y * tileSize, tileSize, tileSize);
     }
 
@@ -224,6 +219,7 @@ function PopRoomBorder(pickedTile, room) {
                 if(usables.indexOf(delTile.x + i + delTile.y * cols) != null){
 
                     usables.splice(usables.indexOf(delTile.x + i + delTile.y * cols), 1);
+                    
                 }
             }
         }
@@ -245,16 +241,14 @@ function PopRoomBorder(pickedTile, room) {
 
 }
 
-function GetRndOuterTile(room){
-    // Get list of outer tiles
-    return room.tileList[int(random(0,room.tileList.length-1))];
-}
 
 function ClearEverything(){
     tiles.splice(0,tiles.length);
     usables.splice(0,usables.length);
     rooms.splice(0,rooms.length);
 }
+
+// No need to state the obvious here
 function BuildArea(){
 //Pouplate the area with unused tiles
     for (var j = 0; j < rows; j++) {
@@ -281,57 +275,8 @@ function BuildArea(){
     for (var i = 0; i < MAX_ROOMS; i++) {
         CreateRoom(i);
     }
+    CreateCorridors();
     
-    testTile = GetRndOuterTile(rooms[0]);
-    targetTile = GetRndOuterTile(rooms[1]);
-
-    var diff = Math.abs(testTile.y - targetTile.y);
-    var dir = -testTile.y + targetTile.y;
-    console.log("Y,Difference: ",diff, "Dir: ", dir);
-
-    // Allign on the y axis first
-    for(let i = 1; i < diff + 1 ; i++){
-
-        // testTile.y < targetTile.y
-        if(dir > 0){
-            if(tiles[testTile.x + (testTile.y + i)*cols] != null)
-            {
-                if(tiles[testTile.x + (testTile.y + i)*cols].used != true){
-                    tiles[testTile.x + (testTile.y + i)*cols].used = true;
-                }
-            }
-        }else if(dir < 0){
-            if(tiles[testTile.x + (testTile.y - i)*cols] != null)
-            {
-                if(tiles[testTile.x + (testTile.y - i)*cols].used != true){
-                    tiles[testTile.x + (testTile.y - i)*cols].used = true;
-                }
-            }
-        }
-    }
-    var lastDir = dir;
-    var lastDiff = diff;
-    // Complete on the X axis at last
-    var diff = Math.abs(testTile.x - targetTile.x);
-    var dir = -testTile.x + targetTile.x;
-    console.log("X,Difference: ",diff, "Dir: ", dir);
-
-    for(let i = 1; i < diff + 1; i++){
-        // to the right
-        if(dir > 0){
-            if(tiles[testTile.x + i + (testTile.y + lastDir)*cols] != null){
-                if(tiles[testTile.x + i + (testTile.y + lastDir)*cols].used != true){
-                    tiles[testTile.x + i + (testTile.y + lastDir)*cols].used = true;
-                }
-            }
-        }else if(dir < 0){
-            if(tiles[testTile.x - i + (testTile.y + lastDir)*cols] != null){
-                if(tiles[testTile.x - i + (testTile.y + lastDir)*cols].used != true){
-                    tiles[testTile.x - i + (testTile.y + lastDir)*cols].used = true;
-                }
-            }
-        }
-    }
 }
 
 function RebuildArea(){
@@ -339,6 +284,66 @@ function RebuildArea(){
     BuildArea();
 }
 
-function HandleCrossingRoom(){
-    
+
+// Creates all corridors connecting each room
+// May NOT be called multiple times
+function CreateCorridors(){
+
+    for(let r = 0; r < rooms.length - 1 ; r++){
+
+        let cTile= GetRndOuterTile(rooms[r]);
+        let tTile =  GetRndOuterTile(rooms[r + 1]);
+
+        var diff = Math.abs(cTile.y - tTile.y);
+        var dir = -cTile.y + tTile.y;
+        console.log("Y,Difference: ",diff, "Dir: ", dir);
+
+        // Allign on the y axis first
+        for(let i = 1; i < diff + 1 ; i++){
+
+            // cTile.y < tTile.y
+            if(dir > 0){
+                if(tiles[cTile.x + (cTile.y + i)*cols] != null)
+                {
+                    if(tiles[cTile.x + (cTile.y + i)*cols].used != true){
+                        tiles[cTile.x + (cTile.y + i)*cols].used = true;
+                    }
+                }
+            }else if(dir < 0){
+                if(tiles[cTile.x + (cTile.y - i)*cols] != null)
+                {
+                    if(tiles[cTile.x + (cTile.y - i)*cols].used != true){
+                        tiles[cTile.x + (cTile.y - i)*cols].used = true;
+                    }
+                }
+            }
+        }
+        var lastDir = dir;
+        var lastDiff = diff;
+        // Complete on the X axis at last
+        var diff = Math.abs(cTile.x - tTile.x);
+        var dir = -cTile.x + tTile.x;
+        console.log("X,Difference: ",diff, "Dir: ", dir);
+
+        for(let i = 1; i < diff + 1; i++){
+            // to the right
+            if(dir > 0){
+                if(tiles[cTile.x + i + (cTile.y + lastDir)*cols] != null){
+                    if(tiles[cTile.x + i + (cTile.y + lastDir)*cols].used != true){
+                        tiles[cTile.x + i + (cTile.y + lastDir)*cols].used = true;
+                    }
+                }
+            }else if(dir < 0){
+                if(tiles[cTile.x - i + (cTile.y + lastDir)*cols] != null){
+                    if(tiles[cTile.x - i + (cTile.y + lastDir)*cols].used != true){
+                        tiles[cTile.x - i + (cTile.y + lastDir)*cols].used = true;
+                    }
+                }
+            }
+        }
+    }
+function GetRndOuterTile(room){
+    // Get list of outer tiles
+    return room.tileList[int(random(0,room.tileList.length-1))];
+}
 }
