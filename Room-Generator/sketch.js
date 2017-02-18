@@ -2,19 +2,23 @@
  * Author: Michael Dodis
  * License: MIT
  * Documentation: Handwritten(probably in online docs by now)
+ * This room generaton implements random room placing, and afterwards
+ * connecting them together.
  */
 
 
 var rows;
 var cols;
-const tileSize = 20;
+var tileSize = 20;
 
 // Max room dimensions
 var MIN_ROOM_SIZE = 2;
 var MAX_ROOM_SIZE = 5;
 // Max number of rooms
 var MAX_ROOMS = 3;
-
+var roomsInput;
+var maxRoomSizeInput;
+var tileSizeInput;
 // Holds all drawn tiles in the area
 let tiles = [];
 // Holds all usable tiles for room creation
@@ -28,10 +32,10 @@ let restartButton;
 function setup() {
 
     createCanvas(640, 480);
-
+    setupInput();
     // Calculate Area tile-dimensions based on canvas dimensions
-    cols = floor(width / tileSize);
-    rows = floor(height / tileSize);
+/*    cols = floor(width / tileSize);
+    rows = floor(height / tileSize);*/
     BuildArea();
 
     restartButton = createButton('Rebuild');
@@ -251,6 +255,13 @@ function ClearEverything(){
 // No need to state the obvious here
 function BuildArea(){
 //Pouplate the area with unused tiles
+    tileSize = int(tileSizeInput.value());
+    MAX_ROOM_SIZE = int(maxRoomSizeInput.value());
+    MAX_ROOMS = int(roomsInput.value());
+
+    cols = floor(width / tileSize);
+    rows = floor(height / tileSize);
+
     for (var j = 0; j < rows; j++) {
         for (var i = 0; i < cols; i++) {
             tiles.push(new Tile(i, j));
@@ -342,8 +353,17 @@ function CreateCorridors(){
             }
         }
     }
+}
 function GetRndOuterTile(room){
     // Get list of outer tiles
-    return room.tileList[int(random(0,room.tileList.length-1))];
+    return room.tileList[int(random(0,room.tileList.length-1))];   
 }
+
+function setupInput(){
+    createP('Number of rooms:');
+    roomsInput = createInput(MAX_ROOMS);
+    createP('Max size of room:');
+    maxRoomSizeInput = createInput(MAX_ROOM_SIZE);
+    createP('Size of tile:');
+    tileSizeInput = createInput(tileSize);
 }

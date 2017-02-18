@@ -6,13 +6,15 @@ body{
     background-color: rgba(84, 110, 122, 1);
 }
 
-
-
-h1{
+h1,p{
     color: rgba(197, 225, 165, 1);
     
     font-family: monospace;
     display: table;
+}
+
+h1{
+
     font-size: 60px;
 }
 
@@ -29,4 +31,8 @@ button {
 }
 button:hover{
     background-color: rgba(158, 177, 137, 1); /* Green */
+}
+
+input{
+     display: block;
 }
