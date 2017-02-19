@@ -1,10 +1,10 @@
-/**Procedural Generation algorithm in P5.js
- * Author: Michael Dodis
- * License: MIT
- * Documentation: Handwritten(probably in online docs by now)
- * This room generaton implements random room placing, and afterwards
- * connecting them together.
- */
+/**-Procedural Generation algorithm in P5.js
+ **- Author: Michael Dodis
+ **- License: MIT
+ **- Documentation: Handwritten(probably in online docs by now)
+ **- This room generaton implements random room placing, and afterwards
+ **- connecting them together.
+ **/
 
 
 var rows;
@@ -125,11 +125,11 @@ function CreateRoom(iteration) {
 
 // Calculates the maximum room dimension for a particular Tile coordinate
 function CalculateRoomSize(distance) {
-    
+
     if (distance >= MAX_ROOM_SIZE) {
 
         return MAX_ROOM_SIZE;
-    
+
     } else {
 
         return distance;
@@ -141,7 +141,7 @@ function Tile(x, y) {
     this.x = x;
     this.y = y;
     this.used = false;
-    
+
 
     this.draw = function() {
         strokeWeight(0.5);
@@ -212,7 +212,7 @@ function PopRoomBorder(pickedTile, room) {
             }
         }
 
-        
+
         // For bottom border
         if(tiles[delTile.x + (delTile.y + room.roomHeight + 1) * cols] != null){
 
@@ -223,7 +223,7 @@ function PopRoomBorder(pickedTile, room) {
                 if(usables.indexOf(delTile.x + i + delTile.y * cols) != null){
 
                     usables.splice(usables.indexOf(delTile.x + i + delTile.y * cols), 1);
-                    
+
                 }
             }
         }
@@ -234,9 +234,11 @@ function PopRoomBorder(pickedTile, room) {
             delTile = tiles[delTile.x + room.roomWidth + 1 + delTile.y * cols];
 
             for (var i = 0; i < room.roomHeight; i++) {
-                
+
                 if (usables.indexOf(delTile.x + (delTile.y - i )*cols) != null) {
                     usables.splice(usables.indexOf(delTile.x + (delTile.y - i )*cols), 1);
+
+
                 }
             }
         }
@@ -250,6 +252,7 @@ function ClearEverything(){
     tiles.splice(0,tiles.length);
     usables.splice(0,usables.length);
     rooms.splice(0,rooms.length);
+
 }
 
 // No need to state the obvious here
@@ -287,7 +290,7 @@ function BuildArea(){
         CreateRoom(i);
     }
     CreateCorridors();
-    
+
 }
 
 function RebuildArea(){
@@ -356,7 +359,7 @@ function CreateCorridors(){
 }
 function GetRndOuterTile(room){
     // Get list of outer tiles
-    return room.tileList[int(random(0,room.tileList.length-1))];   
+    return room.tileList[int(random(0,room.tileList.length-1))];
 }
 
 function setupInput(){
