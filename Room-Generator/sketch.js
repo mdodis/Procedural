@@ -13,7 +13,7 @@ var tileSize = 20;
 
 // Max room dimensions
 var MIN_ROOM_SIZE = 2;
-var MAX_ROOM_SIZE = 5;
+var MAX_ROOM_SIZE = 6;
 // Max number of rooms
 var MAX_ROOMS = 3;
 var roomsInput;
